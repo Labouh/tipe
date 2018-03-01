@@ -37,58 +37,65 @@ class DNA:
 
     
     def randomize(self):
-        self.inputs = np.random.randint(NBINPUTS//2, size=NBNEUR*NBLOB//2)
-        self.iweight = 16. * np.random.ranf(size=NBNEUR*NBLOB//2) - 8.
+        self.iplace = np.random.randint(NBINPUTS//2, size=NBNEUR*NBLOB//2)#que1s inputs pris 
+        self.iweight = 16. * np.random.ranf(size=NBNEUR*NBLOB//2) - 8. # poids des inputs
         self.lweight = 16. * np.random.ranf(size=(NBLOB, NBNEUR, NBNEUR)) - 8.
         self.oweight = 16. * np.random.ranf(size=(NBOUTPUT, NBNEUR*NBLOB)) - 8.
         self.color = np.random.randint(3) + 1 
         
     def mutate(self):
     #There is a disproportionately high chance of mutating the color
-    #gene.  This reduces the chance of one color overwhelming the
-    #others and causing the genepool to grow stagnant.
+	#gene.  This reduces the chance of one color overwhelming the
+	#others and causing the genepool to grow stagnant.
         rand = np.random.randint(100)
         if rand < 10:
-            self.inputs[np.random.randint(len(self.inputs))] = np.random.randint(NBINPUTS//2)
+            self.iplace[np.random.randint(len(self.iplace))] = np.random.randint(NBINPUTS//2)
         elif rand < 35:
             self.__mute(self.iweight)
         elif rand < 50:
             self.color = np.random.randint(3) + 1 
         elif rand < 75:
-            self.__mute(self.iweight)
+            self.__mute(self.lweight)
         else:
             self.__mute(self.oweight)            
             
     def __mute(self, arr):
         # mute a weight randomly
-        arr.ravel()[np.random.randint(np.size(arr))] = 16. * np.random.ranf() - 8.
+        arr.ravel()[np.random.randint(np.size(arr))] = 16. * np.random.ranf() - 8. #vue en ligne d'une matrice
         
 
 class Input:
     def __init__(self, value = 0):
             self.axon = value
     def __mul__(self, other):
+        'savoir multiplier par des poids (dentrites) utilisé par think'
         return self.axon * other
 
-class Neuron(Input):
+class Neuron(Input): 
     def __init__(self, parents, dentrites):
+        'un neuronne contient ses parents et le poids des dentrites'
         self.parents = parents
         self.dentrites = dentrites
     def think(self):
+        'reflexion: somme des multiplications des parents par les dentrites'
         self.axon = sigmoid(np.dot(self.parents, self.dentrites))
     
 class Lobe:
-    # 2 layers of 4 neurons
+    # un lobe = 2 couches de 4 neurones
     def __init__(self, inputs, iplace, iweight, lweight):
+        #partie des tableaux du dna qui concernent ce lobe
             self.top = []
             self.bottom = []
-            for (i, place) in enumerate(iplace):
+            # creation des neurones d'entrée du lobe en lien avec les inputs
+            for (i, place) in enumerate(iplace): #retourne la valeur et la position
                 self.top.append(Neuron([inputs[place*2]], [iweight[i]]))
                 self.top.append(Neuron([inputs[place*2 + 1]], [iweight[i]]))
+            # création du niveau bas en lien avec les neurones du haut
             for bot in range(NBNEUR):
                 self.bottom.append(Neuron(self.top, lweight[bot]))
         
     def think(self):
+        ' reflexion du lob : le haut puis le bas'
         for n in self.top:
             n.think()
         for n in self.bottom:
@@ -98,14 +105,16 @@ class Brain:
     def __init__(self, inputs, dna):
         self.lobes = []
         self.output = []
-        neurons = []
+        neurons = [] # listes des neurones en liens avec les outputs
         
+        # creation des lobes
         for l in range(NBLOB):
             self.lobes.append(Lobe(inputs,
-                                   dna.inputs[l*NBNEUR//2:(l+1)*NBNEUR//2],
+                                   dna.iplace[l*NBNEUR//2:(l+1)*NBNEUR//2],
                                    dna.iweight[l*NBNEUR//2:(l+1)*NBNEUR//2],
                                    dna.lweight[l]))
-            neurons.extend(self.lobes[-1].bottom)
+            neurons.extend(self.lobes[-1].bottom) #concatène sur place
+        # creation des neurones de sortie
         for o in range(NBOUTPUT):
             self.output.append(Neuron(neurons, dna.oweight[o])) 
             
@@ -116,6 +125,7 @@ class Brain:
             n.think()
 
 class Element:
+    'class vide juste pour définir kill qui ne fait rien'
     def kill(self):
         """do what is needed when the element disapear"""
         pass # by default nothing
@@ -180,7 +190,7 @@ class Animal(Element):
                 dy = diffr(specie.y, self.y, YMAP)
                 r2 = dx * dx + dy * dy
                 if r2 < VIEW*VIEW:
-                    da = np.arctan2(dy, dx) - self.route #Difference d'angle
+                    da = np.arctan2(dy, dx) - self.route 
                     if np.cos(da) > 0: #behind you?
                         # decide the input depending on the species
                         # 0,1: same, 2,3: prey, 4,5: pred and 6, 7: plant
@@ -189,7 +199,7 @@ class Animal(Element):
                         else:
                             i = 2 * ((specie.color - self.color)%3)
                         f = 1.0 - (r2 - SIZE*SIZE) / (VIEW*VIEW - SIZE*SIZE)
-                        sa = np.sin(da) #Sinus de la difference
+                        sa = np.sin(da)
                         # check view angle
                         if sa < WIDE and sa > -LOOKAT: #left
                             self.inputs[i].axon += f
@@ -218,7 +228,7 @@ class Animal(Element):
 class World:
     def __init__(self, A = Animal, P = Plant): # inject dependency for inheritance                
         self.curve = []
-        self.world=[]
+        self.world= []
         # add new animals in the world
         for i in range(100):        
             self.world.append(A(self.world))
