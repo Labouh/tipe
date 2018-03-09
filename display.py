@@ -5,7 +5,6 @@
 import neural
 import numpy as np
 
-COLOR=['gray','red','green','blue']
 
 class Animal(neural.Animal):
     def __init__(self, *args, **kwargs):
@@ -21,13 +20,14 @@ class Animal(neural.Animal):
         self.draw()
     
     def draw(self):
+        color =  "#%02x%02x%02x" % (int(255*self.diet),10,10)
         self.poly = canvas.create_polygon([self.x, self.y, 
                                            self.x - neural.SIZE * np.cos(self.route) + neural.SIZE * np.sin(self.route)/2,
                                            self.y - neural.SIZE * np.sin(self.route) - neural.SIZE * np.cos(self.route)/2,
                                            self.x - neural.SIZE * np.cos(self.route) - neural.SIZE * np.sin(self.route)/2,
                                            self.y - neural.SIZE * np.sin(self.route) + neural.SIZE * np.cos(self.route)/2],
-            outline=COLOR[self.color], 
-            fill=COLOR[self.color])
+            outline=color, 
+            fill=color)
                                           
 
 class Plant(neural.Plant):
@@ -39,8 +39,8 @@ class Plant(neural.Plant):
     def draw(self):
         self.circle = canvas.create_oval(self.x - neural.SIZE//2, self.y - neural.SIZE//2,
                                          self.x + neural.SIZE//2, self.y + neural.SIZE//2,
-            outline='gray', 
-            fill='gray')
+            outline='green', 
+            fill='green')
 
 class World(neural.World):
     def display(self):

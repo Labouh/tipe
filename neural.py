@@ -41,19 +41,19 @@ class DNA:
         self.iweight = 16. * np.random.ranf(size=NBNEUR*NBLOB//2) - 8. # poids des inputs
         self.lweight = 16. * np.random.ranf(size=(NBLOB, NBNEUR, NBNEUR)) - 8.
         self.oweight = 16. * np.random.ranf(size=(NBOUTPUT, NBNEUR*NBLOB)) - 8.
-        self.color = np.random.randint(3) + 1 
+        self.diet = np.random.ranf() 
         
     def mutate(self):
     #There is a disproportionately high chance of mutating the color
-	#gene.  This reduces the chance of one color overwhelming the
-	#others and causing the genepool to grow stagnant.
+    #gene.  This reduces the chance of one color overwhelming the
+    #others and causing the genepool to grow stagnant.
         rand = np.random.randint(100)
         if rand < 10:
             self.iplace[np.random.randint(len(self.iplace))] = np.random.randint(NBINPUTS//2)
         elif rand < 35:
             self.__mute(self.iweight)
         elif rand < 50:
-            self.color = np.random.randint(3) + 1 
+            self.diet = np.random.ranf()
         elif rand < 75:
             self.__mute(self.lweight)
         else:
@@ -134,11 +134,10 @@ class Plant(Element):
     def __init__(self):
         self.x = np.random.randint(XMAP)
         self.y = np.random.randint(YMAP)
-        self.color = PLANT
-        self.energy = 1
+        self.energy = ENERGY
         
     def collide(self, other):
-        if other.color != PLANT:
+        if not isinstance(other,Plant):
             other.collide(self)
             
     
@@ -160,7 +159,7 @@ class Animal(Element):
         self.brain = Brain(self.inputs, self.dna)
         self.energy = ENERGY
         self.digest = DIGEST
-        self.color = self.dna.color
+        self.diet = self.dna.diet
     
     def move(self):
         self.see()
@@ -176,7 +175,7 @@ class Animal(Element):
         
         # clone ?
         if self.energy > 2*ENERGY:
-            self.energy -= ENERGY
+            self.energy = ENERGY
             # create a new animal on the same class (allo inheritance)
             self.world.append(self.__class__(self.world, self))
     
@@ -194,10 +193,16 @@ class Animal(Element):
                     if np.cos(da) > 0: #behind you?
                         # decide the input depending on the species
                         # 0,1: same, 2,3: prey, 4,5: pred and 6, 7: plant
-                        if specie.color == PLANT:
+                        if isinstance(specie,Plant):
                             i = 6
                         else:
-                            i = 2 * ((specie.color - self.color)%3)
+                            diffdiet = (specie.diet - self.diet)
+                            if abs(diffdiet) < 0.16 :
+                                i = 0
+                            elif diffdiet >= 0.16 :
+                                i = 4
+                            else :
+                                i = 2
                         f = 1.0 - (r2 - SIZE*SIZE) / (VIEW*VIEW - SIZE*SIZE)
                         sa = np.sin(da)
                         # check view angle
@@ -211,16 +216,18 @@ class Animal(Element):
         
     def collide(self,other):
         energy = 0
-        if other.color == PLANT:
-            energy = 500
-        else:
-            dif = (other.color - self.color)%3
-            if dif == 1 and not self.digest:
+        if isinstance(other,Plant):
+            if not self.digest:
                 self.digest = DIGEST
-                energy = 400
-            elif dif == 2 and not other.digest:
+                energy = ENERGY*(1-self.diet)
+        else:
+            dif = (self.diet - other.diet)
+            if dif > 0. and not self.digest and other.energy > 0: #mange
+                self.digest = DIGEST
+                energy = ENERGY * dif
+            elif dif < 0 and not other.digest and self.energy > 0 : #se fait manger
                 other.digest = DIGEST
-                energy = -400
+                energy = ENERGY * dif
         self.energy += energy
         other.energy -= energy
                 
@@ -229,18 +236,18 @@ class World:
     def __init__(self, A = Animal, P = Plant): # inject dependency for inheritance                
         self.curve = []
         self.world= []
+        self.P = P # to add plant during run
         # add new animals in the world
         for i in range(100):        
             self.world.append(A(self.world))
         for i in range(50):        
             self.world.append(P())
-            self.P = P # to add plant during run
 
     def run(self, time):
         for t in range(time): # time
             if np.random.ranf() > 0.8:
                 self.world.append(self.P())
-            for w in [x for x in self.world if x.color != PLANT]:
+            for w in [x for x in self.world if not isinstance(x,Plant)]:
                 w.move()
             for i in range(len(self.world)):
                 for j in range(i, len(self.world)):
@@ -256,7 +263,7 @@ class World:
                     del self.world[i]
                 else:
                     i+=1
-            self.curve.append(np.bincount([x.color for x in self.world], minlength=4))
+
             
 
     
