@@ -15,16 +15,16 @@ DIGEST = 10 #temps avant de pouvoir manger à nouveau
 XMAP = YMAP = 500
 SIZE = 5
 VIEW = 100
-WIDE = np.sin(1)		#Wide angle of view/vision périphérique
-LOOKAT = np.sin(0.2)	#"Lookat" angle of view/vu par les 2 yeux
+WIDE = np.sin(1)		#vision périphérique
+LOOKAT = np.sin(0.2)	#"Lookat" : vu par les 2 yeux
 
 
-# RED eats GREEN eats BLUE that eats RED...
+
 PLANT = 0
 
-sigmoid = lambda x: np.exp(-np.logaddexp(0, -x)) # to avoid overflow / même si l'overflow était pas vraiment dérangeant 
+sigmoid = lambda x: np.exp(-np.logaddexp(0, -x)) # pour éviter l'overflow même si l'overflow était pas vraiment dérangeant 
 
-# to compute difference on a round map
+# faire une différence sur une map ronde
 diffr = lambda x1, x2, xmax: min((x1-x2)%xmax, (x2-x1)%xmax)
 
 class DNA:
@@ -189,7 +189,7 @@ class Animal(Element):
                 dy = diffr(specie.y, self.y, YMAP)
                 r2 = dx * dx + dy * dy
                 if r2 < VIEW*VIEW:
-                    da = np.arctan2(dy, dx) - self.route 
+                    da = np.arctan2(dy, dx) - self.route #arctan(dy/dx) avec dx proche de 0
                     if np.cos(da) > 0: #behind you?
                         # decide the input depending on the species
                         # 0,1: same, 2,3: prey, 4,5: pred and 6, 7: plant
