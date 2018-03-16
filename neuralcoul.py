@@ -230,11 +230,12 @@ class World:
         self.curve = []
         self.world= []
         # crée de nouveaux animaux dans le monde
+        self.P = P #pour ajouter des plantes qui ont les fonctions de display
         for i in range(100):        
             self.world.append(A(self.world))
         for i in range(50):        
             self.world.append(P())
-            self.P = P #pour modifier ajouter des plantes qui ont les fonctions de display
+            
 
     def run(self, time):
         for t in range(time): # time

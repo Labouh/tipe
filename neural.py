@@ -39,14 +39,14 @@ class DNA:
     def randomize(self):
         self.iplace = np.random.randint(NBINPUTS//2, size=NBNEUR*NBLOB//2)#que1s inputs pris 
         self.iweight = 16. * np.random.ranf(size=NBNEUR*NBLOB//2) - 8. # poids des inputs
-        self.lweight = 16. * np.random.ranf(size=(NBLOB, NBNEUR, NBNEUR)) - 8.
-        self.oweight = 16. * np.random.ranf(size=(NBOUTPUT, NBNEUR*NBLOB)) - 8.
+        self.lweight = 16. * np.random.ranf(size=(NBLOB, NBNEUR, NBNEUR)) - 8.#poids des lobes
+        self.oweight = 16. * np.random.ranf(size=(NBOUTPUT, NBNEUR*NBLOB)) - 8.#poids des outputs
         self.diet = np.random.ranf() 
         
     def mutate(self):
-    #There is a disproportionately high chance of mutating the color
-    #gene.  This reduces the chance of one color overwhelming the
-    #others and causing the genepool to grow stagnant.
+    #Il y a plus de chance de muter le régime
+    #pour réduire la probabilité qu'une couleur domine toutes les autres
+    #rendant le génome stagnant.
         rand = np.random.randint(100)
         if rand < 10:
             self.iplace[np.random.randint(len(self.iplace))] = np.random.randint(NBINPUTS//2)
@@ -60,7 +60,7 @@ class DNA:
             self.__mute(self.oweight)            
             
     def __mute(self, arr):
-        # mute a weight randomly
+        # mute un poids aléatoirement
         arr.ravel()[np.random.randint(np.size(arr))] = 16. * np.random.ranf() - 8. #vue en ligne d'une matrice
         
 
@@ -87,7 +87,7 @@ class Lobe:
             self.top = []
             self.bottom = []
             # creation des neurones d'entrée du lobe en lien avec les inputs
-            for (i, place) in enumerate(iplace): #retourne la valeur et la position
+            for (i, place) in enumerate(iplace): #retourne la position et la valeur 
                 self.top.append(Neuron([inputs[place*2]], [iweight[i]]))
                 self.top.append(Neuron([inputs[place*2 + 1]], [iweight[i]]))
             # création du niveau bas en lien avec les neurones du haut
@@ -128,14 +128,14 @@ class Element:
     'class vide juste pour définir kill qui ne fait rien'
     def kill(self):
         """do what is needed when the element disapear"""
-        pass # by default nothing
+        pass #par défaut ne fait rien
             
 class Plant(Element):
     def __init__(self):
         self.x = np.random.randint(XMAP)
         self.y = np.random.randint(YMAP)
         self.energy = ENERGY
-        
+        self.diet = -0.1
     def collide(self, other):
         if not isinstance(other,Plant):
             other.collide(self)
@@ -176,7 +176,7 @@ class Animal(Element):
         # clone ?
         if self.energy > 2*ENERGY:
             self.energy = ENERGY
-            # create a new animal on the same class (allo inheritance)
+            # crée un animal de la même classe que le père (allo inheritance)
             self.world.append(self.__class__(self.world, self))
     
     def see(self):
@@ -191,7 +191,7 @@ class Animal(Element):
                 if r2 < VIEW*VIEW:
                     da = np.arctan2(dy, dx) - self.route #arctan(dy/dx) avec dx proche de 0
                     if np.cos(da) > 0: #behind you?
-                        # decide the input depending on the species
+                        # decide des input selon quelles espèces il voit
                         # 0,1: same, 2,3: prey, 4,5: pred and 6, 7: plant
                         if isinstance(specie,Plant):
                             i = 6
@@ -233,11 +233,11 @@ class Animal(Element):
                 
 
 class World:
-    def __init__(self, A = Animal, P = Plant): # inject dependency for inheritance                
+    def __init__(self, A = Animal, P = Plant): # injection de dependance pour l'héritage                 
         self.curve = []
         self.world= []
-        self.P = P # to add plant during run
-        # add new animals in the world
+        self.P = P #pour ajouter des plantes qui ont les fonctions de display
+        # crée de nouveaux animaux dans le monde
         for i in range(100):        
             self.world.append(A(self.world))
         for i in range(50):        
@@ -263,7 +263,7 @@ class World:
                     del self.world[i]
                 else:
                     i+=1
-
+            self.curve.append(np.bincount([np.floor(3*x.diet)+1 for x in self.world], minlength=4))
             
 
     
