@@ -2,7 +2,7 @@
 """
 """
 
-import neuralcoul
+import neuralcoul as neural
 import numpy as np
 
 COLOR=['gray','red','green','blue']
