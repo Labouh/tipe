@@ -161,6 +161,7 @@ class Animal(Element):
         self.energy = ENERGY
         self.digest = DIGEST
         self.color = self.dna.color
+        self.birth = world.actualtime
     
     def move(self):
         self.see()
@@ -229,6 +230,8 @@ class World:
     def __init__(self, A = Animal, P = Plant): # injection de dependance pour l'héritage 
         self.curve = []
         self.world= []
+        self.lifespan = []
+        self.actualtime = 0
         # crée de nouveaux animaux dans le monde
         self.P = P #pour ajouter des plantes qui ont les fonctions de display
         for i in range(100):        
@@ -239,6 +242,7 @@ class World:
 
     def run(self, time):
         for t in range(time): # time
+            self.actualtime += 1
             if np.random.ranf() > 0.8:
                 self.world.append(self.P())
             for w in [x for x in self.world if x.color != PLANT]:
@@ -253,6 +257,8 @@ class World:
             i = 0
             while i < len(self.world):  #centre de recyclage
                 if self.world[i].energy < 0:
+                    if self.world[i].color != PLANTE :
+                        self.lifespan.append((self.world[i].diet , self.actualtime - self.world[i].birth))
                     self.world[i].kill()
                     del self.world[i]
                 else:

@@ -142,7 +142,7 @@ class Plant(Element):
             
     
 class Animal(Element):
-    def __init__(self, world, father = None):
+    def __init__(self, world, actualtime,father = None):
         self.world = world
         self.inputs = [Input() for i in range(NBINPUTS)]
         self.speed = 0
@@ -160,6 +160,7 @@ class Animal(Element):
         self.energy = ENERGY
         self.digest = DIGEST
         self.diet = self.dna.diet
+        self.birth = actualtime
     
     def move(self):
         self.see()
@@ -177,7 +178,7 @@ class Animal(Element):
         if self.energy > 2*ENERGY:
             self.energy = ENERGY
             # crée un animal de la même classe que le père (allo inheritance)
-            self.world.append(self.__class__(self.world, self))
+            self.world.append(self.__class__(self.world, actualtime, self))
     
     def see(self):
         # clear
@@ -236,15 +237,18 @@ class World:
     def __init__(self, A = Animal, P = Plant): # injection de dependance pour l'héritage                 
         self.curve = []
         self.world= []
+        self.lifespan = []
+        self.actualtime = 0
         self.P = P #pour ajouter des plantes qui ont les fonctions de display
         # crée de nouveaux animaux dans le monde
         for i in range(100):        
-            self.world.append(A(self.world))
+            self.world.append(A(self.world,self.actualtime))
         for i in range(50):        
             self.world.append(P())
 
     def run(self, time):
         for t in range(time): # time
+            self.actualtime += 1
             if np.random.ranf() > 0.8:
                 self.world.append(self.P())
             for w in [x for x in self.world if not isinstance(x,Plant)]:
@@ -259,6 +263,8 @@ class World:
             i = 0
             while i < len(self.world):
                 if self.world[i].energy < 0:
+                    if not isinstance(self.world[i],Plant):
+                        self.lifespan.append((self.world[i].diet , self.actualtime - self.world[i].birth))
                     self.world[i].kill()
                     del self.world[i]
                 else:
