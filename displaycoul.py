@@ -4,7 +4,7 @@
 
 import neuralcoul as neural
 import numpy as np
-
+    
 COLOR=['gray','red','green','blue']
 
 class Animal(neural.Animal):

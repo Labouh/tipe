@@ -2,7 +2,7 @@
 """
 """
 
-import neural
+import neural as neural
 import numpy as np
 
 
