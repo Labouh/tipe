@@ -17,7 +17,7 @@ SIZE = 5
 VIEW = 100
 WIDE = np.sin(1)		#vision périphérique
 LOOKAT = np.sin(0.2)	#"Lookat" vu par les 2 yeux
-
+actualtime = 0
 
 # RED mange GREEN mange BLUE qui mange RED...
 PLANT = 0
@@ -161,7 +161,7 @@ class Animal(Element):
         self.energy = ENERGY
         self.digest = DIGEST
         self.color = self.dna.color
-        self.birth = world.actualtime
+        self.birth = actualtime
     
     def move(self):
         self.see()
@@ -231,7 +231,8 @@ class World:
         self.curve = []
         self.world= []
         self.lifespan = []
-        self.actualtime = 0
+        self.actualtime = actualtime
+        
         # crée de nouveaux animaux dans le monde
         self.P = P #pour ajouter des plantes qui ont les fonctions de display
         for i in range(100):        
@@ -241,7 +242,9 @@ class World:
             
 
     def run(self, time):
+        global actualtime
         for t in range(time): # time
+            actualtime += 1
             self.actualtime += 1
             if np.random.ranf() > 0.8:
                 self.world.append(self.P())
@@ -257,8 +260,8 @@ class World:
             i = 0
             while i < len(self.world):  #centre de recyclage
                 if self.world[i].energy < 0:
-                    if self.world[i].color != PLANTE :
-                        self.lifespan.append((self.world[i].diet , self.actualtime - self.world[i].birth))
+                    if self.world[i].color != PLANT :
+                        self.lifespan.append((self.world[i].color , actualtime, self.world[i].birth))
                     self.world[i].kill()
                     del self.world[i]
                 else:
