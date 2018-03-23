@@ -261,7 +261,7 @@ class World:
             while i < len(self.world):  #centre de recyclage
                 if self.world[i].energy < 0:
                     if self.world[i].color != PLANT :
-                        self.lifespan.append((self.world[i].color , actualtime, self.world[i].birth))
+                        self.lifespan.append((self.world[i].birth, actualtime, self.world[i].color)) #couleur,naissance,mort
                     self.world[i].kill()
                     del self.world[i]
                 else:
