@@ -1,6 +1,8 @@
 from statistics import mean
 import matplotlib.pyplot as plt
 
+fichier = open("Bestiole essai 1.txt", 'a')
+
 def separe(liste):
     liste_rouge = []
     liste_verte = []
