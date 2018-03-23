@@ -17,7 +17,7 @@ SIZE = 5
 VIEW = 100
 WIDE = np.sin(1)		#vision périphérique
 LOOKAT = np.sin(0.2)	#"Lookat" : vu par les 2 yeux
-
+actualtime = 0
 
 
 PLANT = 0
@@ -238,7 +238,7 @@ class World:
         self.curve = []
         self.world= []
         self.lifespan = []
-        self.actualtime = 0
+        self.actualtime = actualtime
         self.P = P #pour ajouter des plantes qui ont les fonctions de display
         # crée de nouveaux animaux dans le monde
         for i in range(100):        
@@ -247,7 +247,9 @@ class World:
             self.world.append(P())
 
     def run(self, time):
+        global actualtime
         for t in range(time): # time
+            actualtime += 1
             self.actualtime += 1
             if np.random.ranf() > 0.8:
                 self.world.append(self.P())
@@ -264,7 +266,7 @@ class World:
             while i < len(self.world):
                 if self.world[i].energy < 0:
                     if not isinstance(self.world[i],Plant):
-                        self.lifespan.append((self.world[i].diet , self.actualtime - self.world[i].birth))
+                        self.lifespan.append((self.world[i].diet ,  self.world[i].birth , self.actualtime))
                     self.world[i].kill()
                     del self.world[i]
                 else:
