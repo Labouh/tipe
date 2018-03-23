@@ -266,7 +266,7 @@ class World:
             while i < len(self.world):
                 if self.world[i].energy < 0:
                     if not isinstance(self.world[i],Plant):
-                        self.lifespan.append((self.world[i].diet ,  self.world[i].birth , self.actualtime))
+                        self.lifespan.append(( self.world[i].birth , self.actualtime, self.world[i].diet))
                     self.world[i].kill()
                     del self.world[i]
                 else:
