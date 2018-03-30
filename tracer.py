@@ -1,7 +1,7 @@
 from statistics import mean
 import matplotlib.pyplot as plt
+import numpy as np
 
-fichier = open("Bestiole essai 1.txt", 'a')
 
 def separe(liste):
     liste_rouge = []
