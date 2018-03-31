@@ -2,6 +2,13 @@ from statistics import mean
 import matplotlib.pyplot as plt
 import numpy as np
 
+print('nom fichier')
+nomfichier = input()
+fr =open(nomfichier+'r.txt', 'a')
+fv =open(nomfichier+'v.txt', 'a')
+fb =open(nomfichier+'b.txt', 'a')
+ftot =open(nomfichier+'tot.txt', 'a')
+
 
 def separe(liste):
     n = len(liste)
@@ -62,6 +69,18 @@ def duree_de_vie(lr,lv,lb,tmax):
             datab[1,i] = mean(datab[2:datab[0,i],i])
         if datatot[0,i] != 2 :
             datatot[1,i] = mean(datatot[2:datatot[0,i],i])
+    
+    fr.write('datar = ')
+    fr.write(str(datar))
+    
+    fr.write('datav = ')
+    fr.write(str(datav))
+    
+    fr.write('datab = ')
+    fr.write(str(datab))
+    
+    fr.write('datatot = ')
+    fr.write(str(datatot))
     
     return datar[1],datav[1],datab[1],datatot[1]
 
