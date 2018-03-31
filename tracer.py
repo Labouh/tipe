@@ -2,13 +2,6 @@ from statistics import mean
 import matplotlib.pyplot as plt
 import numpy as np
 
-print('nom fichier')
-nomfichier = input()
-fr =open(nomfichier+'r.txt', 'a')
-fv =open(nomfichier+'v.txt', 'a')
-fb =open(nomfichier+'b.txt', 'a')
-ftot =open(nomfichier+'tot.txt', 'a')
-
 
 def separe(liste):
     n = len(liste)
@@ -31,6 +24,14 @@ def separe(liste):
     return liste_rouge[:liste_rouge[0,0]+1], liste_verte[:liste_verte[0,0]+1], liste_bleue[:liste_bleue[0,0]+1]
 
 def duree_de_vie(lr,lv,lb,tmax):
+    
+    print('nom fichier')
+    nomfichier = input()
+    fr =open(nomfichier+'r.txt', 'a')
+    fv =open(nomfichier+'v.txt', 'a')
+    fb =open(nomfichier+'b.txt', 'a')
+    ftot =open(nomfichier+'tot.txt', 'a')
+    
     datar = np.zeros((len(lr),tmax))
     datav = np.zeros((len(lv),tmax))
     datab = np.zeros((len(lb),tmax))
@@ -73,14 +74,19 @@ def duree_de_vie(lr,lv,lb,tmax):
     fr.write('datar = ')
     fr.write(str(datar))
     
-    fr.write('datav = ')
-    fr.write(str(datav))
+    fv.write('datav = ')
+    fv.write(str(datav))
     
-    fr.write('datab = ')
-    fr.write(str(datab))
+    fb.write('datab = ')
+    fb.write(str(datab))
     
-    fr.write('datatot = ')
-    fr.write(str(datatot))
+    ftot.write('datatot = ')
+    ftot.write(str(datatot))
+    
+    fr.close()
+    fv.close()
+    fb.close()
+    ftot.close()
     
     return datar[1],datav[1],datab[1],datatot[1]
 
