@@ -25,18 +25,19 @@ def separe(liste):
 
 def duree_de_vie(lr,lv,lb,tmax, save):
     
-    datar = np.zeros((len(lr),tmax))
-    datav = np.zeros((len(lv),tmax))
-    datab = np.zeros((len(lb),tmax))
-    datatot = np.zeros((3*len(lr),tmax))
+    datar = np.zeros((len(lr),tmax), dtype = 'int')
+    datav = np.zeros((len(lv),tmax), dtype = 'int')
+    datab = np.zeros((len(lb),tmax), dtype = 'int')
+    datatot = np.zeros((3*len(lr),tmax), dtype = 'int')
     datar[0],datav[0],datab[0],datatot[0] = 2,2,2,2
     for r in lr :
         dr = r[1] - r[0]
         for p in range(r[0],r[1]):
-            datar[datar[0,p],p] = dr
-            datar[0,p] += 1
-            datatot[datatot[0,p],p] = dr
-            datatot[0,p] += 1
+            if r[1] < tmax:
+                datar[datar[0,p],p] = dr
+                datar[0,p] += 1
+                datatot[datatot[0,p],p] = dr
+                datatot[0,p] += 1
     print('rouge done')
     for v in lv :
         dv = v[1] - v[0]

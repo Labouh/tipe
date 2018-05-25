@@ -268,5 +268,28 @@ class World:
                     i+=1
             self.curve.append(np.bincount([x.color for x in self.world], minlength=4))
             
-
+def recup_donnees(nom):
+    fich = open(nom+'.txt', 'a')
+    
+    fich.write('tmax = ')
+    fich.write(str(world.actualtime))
+    fich.write(\n)
+    
+    fich.write('lifespan = ')
+    fich.write(str(world.lifespan))
+    fich.write(\n)
+    
+    fich.write('curve = ')
+    fich.write(str(world.curve))
+    fich.write(\n)
+    
+    vivants = []
+    for i in world.world :
+        if type(i) == Animal : # and i.birth < (world.actualtime - <nombre>) # pour eviter les individus qui sont 'trop jeunes'
+            vivants.append(i)
+    fich.write('vivants = ')
+    fich.write(str(vivants))
+    fich.write(\n)
+    
+    fich.close()
     
