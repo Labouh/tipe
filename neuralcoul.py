@@ -125,10 +125,10 @@ class Brain:
             n.think()
 
 class Element:
-    'class vide juste pour définir kill qui ne fait rien'
+    'classe vide juste pour definir kill qui ne fait rien'
     def kill(self):
         """do what is needed when the element disapear"""
-        pass #par défaut ne fait rien
+        pass #par defaut ne fait rien
             
 class Plant(Element):
     def __init__(self):
@@ -273,15 +273,15 @@ def recup_donnees(nom):
     
     fich.write('tmax = ')
     fich.write(str(world.actualtime))
-    fich.write(\n)
+    fich.write('\n\n')
     
     fich.write('lifespan = ')
     fich.write(str(world.lifespan))
-    fich.write(\n)
+    fich.write('\n\n')
     
     fich.write('curve = ')
     fich.write(str(world.curve))
-    fich.write(\n)
+    fich.write('\n\n')
     
     vivants = []
     for i in world.world :
@@ -289,7 +289,7 @@ def recup_donnees(nom):
             vivants.append(i)
     fich.write('vivants = ')
     fich.write(str(vivants))
-    fich.write(\n)
+    fich.write('\n\n')
     
     fich.close()
     
