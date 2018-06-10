@@ -4,6 +4,7 @@
 
 import neuralcoul as neural
 import numpy as np
+from exemple import t 
     
 COLOR=['gray','red','green','blue']
 
@@ -21,14 +22,24 @@ class Animal(neural.Animal):
         self.draw()
     
     def draw(self):
-        self.poly = canvas.create_polygon([self.x, self.y, 
-                                           self.x - neural.SIZE * np.cos(self.route) + neural.SIZE * np.sin(self.route)/2,
-                                           self.y - neural.SIZE * np.sin(self.route) - neural.SIZE * np.cos(self.route)/2,
-                                           self.x - neural.SIZE * np.cos(self.route) - neural.SIZE * np.sin(self.route)/2,
-                                           self.y - neural.SIZE * np.sin(self.route) + neural.SIZE * np.cos(self.route)/2],
-            outline=COLOR[self.color], 
-            fill=COLOR[self.color])
-                                          
+        if self.flag:
+            self.poly = canvas.create_polygon([self.x, self.y, 
+                                            self.x - neural.SIZE * np.cos(self.route) + neural.SIZE * np.sin(self.route)/2,
+                                            self.y - neural.SIZE * np.sin(self.route) - neural.SIZE * np.cos(self.route)/2,
+                                            self.x - neural.SIZE * np.cos(self.route) - neural.SIZE * np.sin(self.route)/2,
+                                            self.y - neural.SIZE * np.sin(self.route) + neural.SIZE * np.cos(self.route)/2],
+                outline="pink", 
+                fill="pink")
+                                    
+        else:
+            self.poly = canvas.create_polygon([self.x, self.y, 
+                                            self.x - neural.SIZE * np.cos(self.route) + neural.SIZE * np.sin(self.route)/2,
+                                            self.y - neural.SIZE * np.sin(self.route) - neural.SIZE * np.cos(self.route)/2,
+                                            self.x - neural.SIZE * np.cos(self.route) - neural.SIZE * np.sin(self.route)/2,
+                                            self.y - neural.SIZE * np.sin(self.route) + neural.SIZE * np.cos(self.route)/2],
+                outline=COLOR[self.color], 
+                fill=COLOR[self.color])
+                                            
 
 class Plant(neural.Plant):
     def __init__(self, *args, **kwargs):
