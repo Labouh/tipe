@@ -25,7 +25,7 @@ PLANT = 0
 sigmoid = lambda x: np.exp(-np.logaddexp(0, -x)) # pour éviter l'overflow même si l'overflow était pas vraiment dérangeant 
 
 # faire une différence sur une map ronde
-diffr = lambda x1, x2, xmax: min((x1-x2)%xmax, (x2-x1)%xmax)
+diffr = lambda x1, x2, xmax: (x1-x2)-np.sign(x1-x2)*xmax if abs(x1-x2) > xmax/2  else (x1-x2)
 
 class DNA:
     def __init__(self, dna = None):
