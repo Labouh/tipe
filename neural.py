@@ -25,7 +25,7 @@ PLANT = 0
 
 sigmoid = lambda x: np.exp(-np.logaddexp(0, -x)) # to avoid overflow
 
-# to compute difference on a round map
+# faire une différence sur une map ronde
 diffr = lambda x1, x2, xmax: (x1-x2)-np.sign(x1-x2)*xmax if abs(x1-x2) > xmax/2  else (x1-x2)
 
 class DNA:
